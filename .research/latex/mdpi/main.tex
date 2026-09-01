@@ -1,0 +1,254 @@
+% ============================================================================
+% 事前登録論文（preregistration）。このファイルを追加するコミットが凍結点であり、
+% 実験はすべてこのコミットの子孫で実行される。主張（C1–C3）は追記のみ可
+% （append-only）：基準を満たさない主張は否定的結果として報告し、削除・改変しない。
+%
+% airas prereg declarations (compute_paper_values will realize these verbatim;
+% refs resolve into .research/results/<run_id>/metrics.json):
+%   rho_jacobcov_real        = mean(comparative-1-jacobcov-cifar10.seed0.spearman_rho, comparative-1-jacobcov-cifar10.seed1.spearman_rho, comparative-1-jacobcov-cifar10.seed2.spearman_rho) round 3
+%   rho_jacobcov_real_std    = std(comparative-1-jacobcov-cifar10.seed0.spearman_rho, comparative-1-jacobcov-cifar10.seed1.spearman_rho, comparative-1-jacobcov-cifar10.seed2.spearman_rho) round 3
+%   rho_jacobcov_rand        = mean(proposed-jacobcov-randinput.seed0.spearman_rho, proposed-jacobcov-randinput.seed1.spearman_rho, proposed-jacobcov-randinput.seed2.spearman_rho) round 3
+%   rho_jacobcov_rand_std    = std(proposed-jacobcov-randinput.seed0.spearman_rho, proposed-jacobcov-randinput.seed1.spearman_rho, proposed-jacobcov-randinput.seed2.spearman_rho) round 3
+%   delta_rho_jacobcov_seed0 = diff(comparative-1-jacobcov-cifar10.seed0.spearman_rho, proposed-jacobcov-randinput.seed0.spearman_rho) round 3
+%   delta_rho_jacobcov_seed1 = diff(comparative-1-jacobcov-cifar10.seed1.spearman_rho, proposed-jacobcov-randinput.seed1.spearman_rho) round 3
+%   delta_rho_jacobcov_seed2 = diff(comparative-1-jacobcov-cifar10.seed2.spearman_rho, proposed-jacobcov-randinput.seed2.spearman_rho) round 3
+%   rho_snip_real            = mean(comparative-2-snip-cifar10.seed0.spearman_rho, comparative-2-snip-cifar10.seed1.spearman_rho, comparative-2-snip-cifar10.seed2.spearman_rho) round 3
+%   rho_snip_real_std        = std(comparative-2-snip-cifar10.seed0.spearman_rho, comparative-2-snip-cifar10.seed1.spearman_rho, comparative-2-snip-cifar10.seed2.spearman_rho) round 3
+%   rho_snip_rand            = mean(comparative-3-snip-randinput.seed0.spearman_rho, comparative-3-snip-randinput.seed1.spearman_rho, comparative-3-snip-randinput.seed2.spearman_rho) round 3
+%   rho_snip_rand_std        = std(comparative-3-snip-randinput.seed0.spearman_rho, comparative-3-snip-randinput.seed1.spearman_rho, comparative-3-snip-randinput.seed2.spearman_rho) round 3
+%   delta_rho_snip_seed0     = diff(comparative-2-snip-cifar10.seed0.spearman_rho, comparative-3-snip-randinput.seed0.spearman_rho) round 3
+%   delta_rho_snip_seed1     = diff(comparative-2-snip-cifar10.seed1.spearman_rho, comparative-3-snip-randinput.seed1.spearman_rho) round 3
+%   delta_rho_snip_seed2     = diff(comparative-2-snip-cifar10.seed2.spearman_rho, comparative-3-snip-randinput.seed2.spearman_rho) round 3
+%   rho_synflow_real         = mean(comparative-4-synflow-cifar10.seed0.spearman_rho, comparative-4-synflow-cifar10.seed1.spearman_rho, comparative-4-synflow-cifar10.seed2.spearman_rho) round 3
+%   rho_synflow_real_std     = std(comparative-4-synflow-cifar10.seed0.spearman_rho, comparative-4-synflow-cifar10.seed1.spearman_rho, comparative-4-synflow-cifar10.seed2.spearman_rho) round 3
+%   rho_synflow_rand         = mean(comparative-5-synflow-randinput.seed0.spearman_rho, comparative-5-synflow-randinput.seed1.spearman_rho, comparative-5-synflow-randinput.seed2.spearman_rho) round 3
+%   rho_synflow_rand_std     = std(comparative-5-synflow-randinput.seed0.spearman_rho, comparative-5-synflow-randinput.seed1.spearman_rho, comparative-5-synflow-randinput.seed2.spearman_rho) round 3
+%   delta_rho_synflow_seed0  = diff(comparative-4-synflow-cifar10.seed0.spearman_rho, comparative-5-synflow-randinput.seed0.spearman_rho) round 3
+%   delta_rho_synflow_seed1  = diff(comparative-4-synflow-cifar10.seed1.spearman_rho, comparative-5-synflow-randinput.seed1.spearman_rho) round 3
+%   delta_rho_synflow_seed2  = diff(comparative-4-synflow-cifar10.seed2.spearman_rho, comparative-5-synflow-randinput.seed2.spearman_rho) round 3
+%
+% airas prereg table declaration (compute_paper_tables will realize this):
+%   key=main_results, caption=各 proxy・入力条件の順位保存性（canonical シード 0）,
+%   label=tab:main_results,
+%   columns = [
+%     {header: Spearman $\rho$,        ref_path: canonical.spearman_rho,           round: 3},
+%     {header: Kendall $\tau$,         ref_path: canonical.kendall_tau,            round: 3},
+%     {header: Precision@top-10\%,     ref_path: canonical.precision_at_top_10pct, round: 3}]
+%   rows = [
+%     {run_id: comparative-1-jacobcov-cifar10,  label: jacob\_cov / 実データ},
+%     {run_id: proposed-jacobcov-randinput,     label: jacob\_cov / 乱数入力},
+%     {run_id: comparative-2-snip-cifar10,      label: snip / 実データ},
+%     {run_id: comparative-3-snip-randinput,    label: snip / 乱数入力},
+%     {run_id: comparative-4-synflow-cifar10,   label: synflow / 実データ},
+%     {run_id: comparative-5-synflow-randinput, label: synflow / 乱数入力}]
+% ============================================================================
+\documentclass[11pt]{article}
+\usepackage{luatexja-fontspec}
+\setmainjfont{IPAexMincho}
+\setsansjfont{IPAexGothic}
+\usepackage[margin=25mm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+% 実験前は values.tex が存在しない（compute_paper_values が実験後に生成する）。
+% その間、各値は ??airasval:key?? として描画されるのが正しい事前登録状態である。
+\InputIfFileExists{values.tex}{}{}
+\providecommand{\airasval}[1]{\textbf{??airasval:\detokenize{#1}??}}
+\providecommand{\unverified}[1]{#1}
+
+\title{ゼロコストプロキシは入力データを見ているか：\\
+NAS-Bench-201 における乱数入力置換の事前登録付き小規模検証}
+\author{AIRAS 自動研究システム（ホストモード）\\ \small 実験実行（予定）: RIKYU (NVIDIA GB200, aarch64) via Seyval / 評価: airas-eval \texttt{nas\_pre\_training}}
+\date{2026年9月1日（事前登録版：実験実行前に凍結）}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+訓練不要のニューラルアーキテクチャ探索（NAS）で用いられるゼロコストプロキシの多くは
+「1 ミニバッチの実データ」から計算されるが、その実データが予測力にどれだけ寄与して
+いるかは定量化されていない。Mellor らは NASWOT スコアが乱数入力でも「傾向が変わらな
+い」ことを 10 アーキテクチャの箱ひげ図で定性的に示したのみである。本研究は、参照実装
+に渡すミニバッチを標準正規ノイズ（ラベルは一様乱数）に置換するという最小介入により、
+入力データの実効的寄与を順位相関の差 $\Delta\rho = \rho_{\mathrm{real}} -
+\rho_{\mathrm{rand}}$ として定量する。NAS-Bench-201 から固定シードで一様抽出した
+200 アーキテクチャに対し、jacob\_cov（入力依存）・snip（入力・ラベル依存）・
+synflow（構成上データ非依存、正の対照）の 3 プロキシ $\times$ 2 入力条件の 6 run を
+実行し、真値はベンチマーク公表精度の表引きのみで参照する。評価指標はすべて外部の固定
+評価層 airas-eval に委譲する。本稿は実験実行前に主張・基準・期待値を凍結した事前登録
+論文であり、現時点で全ての実験数値は未充填のプレースホルダである。主結果として
+jacob\_cov の $\Delta\rho$（3 シード: \airasval{delta_rho_jacobcov_seed0} /
+\airasval{delta_rho_jacobcov_seed1} / \airasval{delta_rho_jacobcov_seed2}）を報告する。
+\end{abstract}
+
+\section{はじめに}
+ゼロコストプロキシ~\cite{abdelfattah-2021-zero,mellor-2021-neural}は、初期化直後の
+ネットワークに 1 ミニバッチを 1 回通すだけの統計量でアーキテクチャを順位付けし、
+NAS の候補評価コストを桁違いに削減する。標準的なプロトコルでは、このミニバッチには
+対象タスクの実データ（例：CIFAR-10）が用いられる。しかし、プロキシの予測力のうち
+「実データであること」に由来する部分がどれだけあるかは、ほとんど測られていない。
+
+この問いには実用と解釈の両面の意味がある。実用面では、もし乱数入力で十分なら、
+プロキシ計算にデータセットの整備・前処理は不要となり、完全に data-free な事前評価が
+正当化される。解釈面では、乱数入力で順位相関が保たれることは、プロキシが入力分布
+ではなくアーキテクチャ固有の性質（勾配伝播のしやすさ・表現力等）を測っている
+ことの直接的証拠となる。
+
+Mellor ら~\cite{mellor-2021-neural}は NASWOT スコアのアブレーション（同論文
+Fig.~5）で、正規乱数入力にしても「全体傾向はほとんど変わらない」と報告したが、
+これは 10 アーキテクチャに対する箱ひげ図による定性的確認であり、探索空間規模の
+順位相関としての定量化ではない。本研究はこれを、順位相関の差 $\Delta\rho$ という
+単一の検証量に落とし、事前登録した基準（第\ref{sec:results}節）で判定する。
+
+本研究は超小規模（200 アーキテクチャ・6 run・学習ゼロ）を意図的に選んでいる。
+研究上の主張もその規模に見合う範囲——NAS-Bench-201 / CIFAR-10 という単一の
+探索空間・データセット対における検証——に限定する。
+
+\section{関連研究}
+\textbf{ゼロコストプロキシ。}Abdelfattah ら~\cite{abdelfattah-2021-zero}は枝刈り
+由来の saliency 指標を全パラメータで総和するスコアに拡張し、NAS-Bench-201 /
+CIFAR-10 で最終テスト精度との Spearman 順位相関 synflow \unverified{0.74}、
+jacob\_cov \unverified{0.73}、snip \unverified{0.58} を報告した（数値は同論文
+Table より引用）。このうち synflow は損失を全パラメータの積とするため
+\textbf{構成上データ非依存}であり、本研究では実装健全性の正の対照として用いる。
+
+\textbf{入力への頑健性の示唆。}Mellor ら~\cite{mellor-2021-neural}のアブレーション
+は前節の通り定性的である。NAS-Bench-Suite-Zero~\cite{krishnakumar-2022-nas}は
+13 プロキシを 28 タスクで統一評価したが、入力データの置換実験は含まれない。
+
+\textbf{ベンチマーク。}真値は NAS-Bench-201~\cite{dong-2020-nas} の公表テスト精度
+（200 エポック学習済み）を用いる。本研究ではアーキテクチャの学習を一切行わず、
+真値参照は NAS-Bench-Suite-Zero~\cite{krishnakumar-2022-nas} が再配布する結果
+テーブル（SHA-256 で固定）の表引きのみである。
+
+\section{方法：乱数入力置換}
+介入は 1 点のみである。参照実装（Abdelfattah らの公開コード）の
+\texttt{find\_measures} に渡すミニバッチを、
+\begin{itemize}
+  \item \textbf{real 条件}: CIFAR-10 訓練ミニバッチ（参照実装自身のローダ、
+        バッチサイズ 128）
+  \item \textbf{randinput 条件}: 同一形状 $(128, 3, 32, 32)$ の標準正規ノイズ
+        入力と、$\{0,\dots,9\}$ 上の一様乱数ラベル
+\end{itemize}
+のいずれかとする。それ以外——アーキテクチャ集合、ネットワーク構築、重み初期化、
+乱数シード、バッチ形状、プロキシ実装、評価層——は全条件で完全に同一に保つ。
+したがって条件間の順位相関の差は、入力が実データであることの寄与のみに帰属できる。
+
+各 run は「1 プロキシ $\times$ 1 入力条件」であり、200 アーキテクチャそれぞれを
+初期化し、1 回の forward/backward でプロキシスコアを計算し、スコア降順の順位と
+ベンチマーク真値との順位相関を評価層が算出する。
+
+\section{実験設定}
+\textbf{探索空間とサンプル。}NAS-Bench-201 の全 15{,}625 アーキテクチャから、
+設計時に固定したシード（sample\_seed=42）で 200 を一様抽出する。全 run で同一の
+200 アーキテクチャを用いる。
+
+\textbf{run 構成。}6 run：proposed-jacobcov-randinput（介入の主対象）、
+comparative-1-jacobcov-cifar10、comparative-2-snip-cifar10、
+comparative-3-snip-randinput、comparative-4-synflow-cifar10、
+comparative-5-synflow-randinput。重み初期化シードは $\{0,1,2\}$ の 3 個で、
+canonical シードは 0 に事前固定する。
+
+\textbf{評価。}指標は外部の固定評価層 airas-eval の \texttt{nas\_pre\_training}
+タスクが生の予測スコアと真値から機械的に算出する。実験コードは指標を一切計算しない。
+主要指標は Spearman 順位相関 \texttt{spearman\_rho}、支持指標は
+\texttt{kendall\_tau} と \texttt{precision\_at\_top\_10pct}。
+
+\textbf{実行環境。}Seyval 経由の BYO Slurm クラスタ（RIKYU、NVIDIA GB200、
+aarch64）。依存関係は uv.lock で固定し、Dockerfile から再現的にビルドする。
+
+\textbf{再利用。}実装基盤（真値テーブルの SHA-256 固定取得、プロキシ参照実装
+foresight、CIFAR ローダ、Dockerfile 構成）は同一著者による先行スタディ
+（auto-res2/zero-cost-nas-rank-study）を再利用し、新規実装は randinput
+データローダと run 構成のみである。再利用と自前実装の境界はコード中に明示する。
+
+\section{結果（事前登録された主張）}\label{sec:results}
+以下の主張 C1–C3 は\textbf{実験実行前に凍結}したものである。各主張について、
+支持の基準（criterion）と期待される大きさ（expected magnitude）を散文で先に
+述べ、実験後に得られる数値は宣言済みプレースホルダ（\texttt{??airasval:...??}
+と表示されている間は未充填）で示す。基準を満たさなかった主張は、削除や改変を
+せず否定的結果として報告する。
+
+\begin{enumerate}
+  \item[\textbf{C1}]（中心仮説：jacob\_cov の入力非依存性）
+  \textbf{主張}: jacob\_cov の順位相関は、実データを乱数入力に置換してもほとんど
+  低下しない。
+  \textbf{基準}: 3 シードすべてで $\Delta\rho_{\mathrm{jacob\_cov}} \le 0.10$。
+  \textbf{期待}: $\Delta\rho$ は $0$〜$0.05$ 程度、$\rho_{\mathrm{real}}$ は文献値
+  \unverified{0.73} の前後。
+  \textbf{実測}: $\rho_{\mathrm{real}} = \airasval{rho_jacobcov_real} \pm
+  \airasval{rho_jacobcov_real_std}$、$\rho_{\mathrm{rand}} =
+  \airasval{rho_jacobcov_rand} \pm \airasval{rho_jacobcov_rand_std}$、
+  $\Delta\rho$（シード 0/1/2）$= \airasval{delta_rho_jacobcov_seed0} /
+  \airasval{delta_rho_jacobcov_seed1} / \airasval{delta_rho_jacobcov_seed2}$。
+
+  \item[\textbf{C2}]（snip はより入力に依存する）
+  \textbf{主張}: ラベルと損失勾配に依存する snip の劣化は jacob\_cov より大きい。
+  \textbf{基準}: 3 シードすべてで、同一シードの
+  $\Delta\rho_{\mathrm{snip}} > \Delta\rho_{\mathrm{jacob\_cov}}$。
+  \textbf{期待}: $\Delta\rho_{\mathrm{snip}}$ は $0.05$〜$0.2$ 程度。ただし乱数入力
+  でも $\rho_{\mathrm{rand}} > 0.4$ は保つと予想する（副次的な期待であり C2 の
+  判定基準には含めない）。
+  \textbf{実測}: $\rho_{\mathrm{real}} = \airasval{rho_snip_real} \pm
+  \airasval{rho_snip_real_std}$、$\rho_{\mathrm{rand}} = \airasval{rho_snip_rand}
+  \pm \airasval{rho_snip_rand_std}$、$\Delta\rho$（シード 0/1/2）$=
+  \airasval{delta_rho_snip_seed0} / \airasval{delta_rho_snip_seed1} /
+  \airasval{delta_rho_snip_seed2}$。
+
+  \item[\textbf{C3}]（正の対照：synflow は厳密にデータ非依存）
+  \textbf{主張}: synflow のスコアは構成上入力に依存しないため、条件間の差は
+  数値誤差の範囲に収まる。
+  \textbf{基準}: 3 シードすべてで $|\Delta\rho_{\mathrm{synflow}}| \le 0.01$。
+  \textbf{期待}: 厳密に $0$。この基準が破れた場合は仮説の反証ではなく、実装
+  またはパイプラインの欠陥を示すため、原因を究明し修正後に全 run を再実行する。
+  \textbf{実測}: $\rho_{\mathrm{real}} = \airasval{rho_synflow_real} \pm
+  \airasval{rho_synflow_real_std}$、$\rho_{\mathrm{rand}} =
+  \airasval{rho_synflow_rand} \pm \airasval{rho_synflow_rand_std}$、
+  $\Delta\rho$（シード 0/1/2）$= \airasval{delta_rho_synflow_seed0} /
+  \airasval{delta_rho_synflow_seed1} / \airasval{delta_rho_synflow_seed2}$。
+\end{enumerate}
+
+表~\ref{tab:main_results}に全 run の主要・支持指標を、図~\ref{fig:delta}に
+$\Delta\rho$ の比較を示す（いずれも実験後に決定論的に生成される）。
+
+\IfFileExists{tables/main_results.tex}{\input{tables/main_results.tex}}{%
+\begin{table}[h]\centering
+\caption{各 proxy・入力条件の順位保存性（canonical シード 0）。実験後に
+compute\_paper\_tables が宣言から生成する。}
+\label{tab:main_results}
+（未生成：実験実行前）
+\end{table}}
+
+\begin{figure}[h]
+\centering
+\IfFileExists{images/chart/delta_rho.png}{%
+\includegraphics[width=0.7\linewidth]{images/chart/delta_rho.png}}{%
+（図は未生成：実験実行後に \texttt{render\_chart} が測定値参照から描画する）}
+\caption{proxy ごとの $\Delta\rho = \rho_{\mathrm{real}} - \rho_{\mathrm{rand}}$
+（シード別）。データ点は実測メトリクスへの参照から描画され、手入力されない。}
+\label{fig:delta}
+\end{figure}
+
+\section{考察（実験後に追記）}
+本節は実験実行・分析後に追記する。追記にあたり、C1–C3 の判定と独立に観察された
+知見は、事後的・探索的な主張であることを明示した上で新しい主張として追加する
+（既存の主張の書き換えは行わない）。
+
+\section{限界}
+本検証は NAS-Bench-201 / CIFAR-10 という単一の探索空間・データセット対、
+200 アーキテクチャのサンプル、3 プロキシに限定される。ここで
+$\Delta\rho \approx 0$ が観察されても、他の探索空間（例：NAS-Bench-101、NDS）や
+より大きな入力分布シフトに一般化する保証はない。また $\Delta\rho$ の判定基準
+0.10 は、サンプル 200 での $\rho$ の推定ゆらぎ（ブートストラップ標準誤差
+$\approx 0.03$〜0.05）を上回るよう設計時に選んだ閾値であり、統計的検定に
+基づくものではない。
+
+\section{結論（実験後に確定）}
+実験実行前のため、結論は C1–C3 の判定結果とともに実験後に記述する。
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
