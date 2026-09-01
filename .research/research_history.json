@@ -1,1 +1,185 @@
-{}
+{
+ "research_topic": "training-free NAS の zero-cost proxy が入力データに本当に依存しているかの定量的検証。NAS-Bench-201 上で、実データ（CIFAR-10）ミニバッチと乱数ノイズ入力のそれぞれで zero-cost proxy（synflow / jacob_cov / snip）を計算し、真の精度との順位相関の差 Δρ を測る。アーキテクチャの学習は一切行わず、真値は表形式ベンチマークの公表値を参照する。評価指標は外部の固定された評価層 airas-eval の nas_pre_training タスクで算出し、実験コードは指標を一切計算しない。",
+ "queries": [
+  "zero-cost proxies neural architecture search"
+ ],
+ "research_study_list": [
+  {
+   "title": "Neural Architecture Search without Training",
+   "abstract": "NAS algorithms tend to be slow and expensive; they need to train vast numbers of candidate networks. We examine the overlap of activations between datapoints in untrained networks and motivate how this gives a measure indicative of trained performance (NASWOT). Search in seconds on NAS-Bench-101/201, NATS-Bench, NDS.",
+   "meta_data": {
+    "arxiv_id": "2006.04647",
+    "authors": [
+     "Joseph Mellor",
+     "Jack Turner",
+     "Amos Storkey",
+     "Elliot J. Crowley"
+    ],
+    "venue": "ICML 2021",
+    "pdf_url": "https://arxiv.org/pdf/2006.04647",
+    "github_url": "https://github.com/BayesWatch/nas-without-training",
+    "published_date": "2021-06-11",
+    "peer_review_status": "yes"
+   },
+   "llm_extracted_info": {
+    "main_contributions": "未学習ネットワークの ReLU 活性パターン（バイナリ符号）のミニバッチ内 Hamming 距離カーネル K_H から score = log|K_H| を定義し、学習後精度と相関することを示した。学習なしで NAS を数十秒で実行する NASWOT アルゴリズムを提案。",
+    "methodology": "ミニバッチの各入力が誘導する ReLU 活性の二値符号間 Hamming 距離でカーネル行列を構成し log-determinant をスコアとする。ランダムサンプルした N 個のアーキテクチャからスコア最大を選ぶだけの探索。REA への統合（AREA）も提示。",
+    "experimental_setup": "NAS-Bench-101 / NAS-Bench-201 / NATS-Bench SSS / NDS の各探索空間からランダムサンプル（多くは 1000 network）し、スコアと学習後検証精度の Kendall τ を報告。NAS-Bench-201 CIFAR-10 で τ=0.574、CIFAR-100 で 0.611、ImageNet16-120 で 0.549。",
+    "limitations": "本研究の中心的関心である「入力データへの依存性」については、アブレーション（Fig.5 右上）で CIFAR-100 の 10 アーキテクチャに正規乱数入力を与えた箱ひげ図により『傾向はほぼ変わらない』と定性的に述べるのみで、探索空間規模の順位相関としての定量化は無い。スコアのミニバッチ・初期化・バッチサイズへの頑健性も同じ 10 アーキテクチャでの確認に留まる。",
+    "future_research_directions": "スコアが捉えている構造的性質の理論的解明、他の指標との組み合わせ。",
+    "experimental_code": "https://github.com/BayesWatch/nas-without-training",
+    "experimental_info": "本文 Fig.5 のアブレーションが本研究（乱数入力での定量的再検証）の直接の出発点。フルテキスト読了済み（2026-09-01）。"
+   }
+  },
+  {
+   "title": "Zero-Cost Proxies for Lightweight NAS",
+   "abstract": "We evaluate conventional reduced-training proxies and propose a series of zero-cost proxies, based on recent pruning literature, that use just a single minibatch of training data to compute a model's score. Our zero-cost proxies use 3 orders of magnitude less computation but can match and even outperform conventional proxies.",
+   "meta_data": {
+    "arxiv_id": "2101.08134",
+    "doi": "10.48550/arxiv.2101.08134",
+    "authors": [
+     "Mohamed S. Abdelfattah",
+     "Abhinav Mehrotra",
+     "Lukasz Dudziak",
+     "Nicholas D. Lane"
+    ],
+    "venue": "ICLR 2021",
+    "pdf_url": "https://arxiv.org/pdf/2101.08134",
+    "github_url": "https://github.com/mohsaied/zero-cost-nas",
+    "published_date": "2021-01-20",
+    "peer_review_status": "yes"
+   },
+   "llm_extracted_info": {
+    "main_contributions": "枝刈り（pruning-at-initialization）の saliency 指標をネットワーク全体のスコアに拡張し、6 種の zero-cost proxy (grad_norm, snip, grasp, fisher, synflow, jacob_cov) として NAS の評価フェーズに導入。3 桁少ない計算量で従来 proxy と同等以上の順位保存性を示した。",
+    "methodology": "1 ミニバッチで forward/backward を 1 回だけ行い、パラメータ単位の saliency を総和してスコア化。snip は |∂L/∂θ ⊙ θ|、synflow は全パラメータ積を損失とするためデータ非依存、jacob_cov は Mellor らの Jacobian 共分散指標。評価は最終テスト精度に対する Spearman ρ。",
+    "experimental_setup": "NAS-Bench-201 の全 15,625 モデルを CIFAR-10 / CIFAR-100 / ImageNet16-120 で評価。NAS-Bench-201/CIFAR-10 の Spearman ρ: synflow 0.74, jacob_cov 0.73, snip 0.58, grad_norm 0.58。",
+    "limitations": "synflow が構成上データ非依存である一方、データ依存 proxy（jacob_cov, snip 等）における実データの実効的寄与は測定していない。探索空間を変えると順位相関が大きく崩れる。",
+    "future_research_directions": "探索空間をまたいで一貫する指標の設計、複数指標の非自明な組み合わせ。",
+    "experimental_code": "https://github.com/mohsaied/zero-cost-nas",
+    "experimental_info": "参照実装（find_measures）を本研究でもそのまま使用する。前回スタディ zero-cost-nas-rank-study（auto-res2）でフルテキスト読了・実装検証済み。"
+   }
+  },
+  {
+   "title": "NAS-Bench-201: Extending the Scope of Reproducible Neural Architecture Search",
+   "abstract": "NAS-Bench-201 provides a fixed cell-based search space of 15,625 architectures, each trained on CIFAR-10, CIFAR-100 and ImageNet16-120 with published accuracies, enabling training-free evaluation of NAS methods by table lookup.",
+   "meta_data": {
+    "arxiv_id": "2001.00326",
+    "authors": [
+     "Xuanyi Dong",
+     "Yi Yang"
+    ],
+    "venue": "ICLR 2020",
+    "peer_review_status": "yes"
+   }
+  },
+  {
+   "title": "NAS-Bench-Suite-Zero: Accelerating Research on Zero Cost Proxies",
+   "abstract": "Precomputed zero-cost proxy scores across 28 tasks; redistributes NAS-Bench-201 ground-truth tables (nb201_all.pickle) used here as the SHA-256-pinned truth table.",
+   "meta_data": {
+    "authors": [
+     "Arjun Krishnakumar",
+     "Colin White",
+     "Arber Zela",
+     "Renbo Tu",
+     "Mahmoud Safari",
+     "Frank Hutter"
+    ],
+    "venue": "NeurIPS 2022 Datasets and Benchmarks",
+    "github_url": "https://github.com/automl/naslib/tree/zerocost"
+   }
+  }
+ ],
+ "research_hypothesis": {
+  "open_problems": "Mellor ら（NASWOT, ICML 2021）は「スコアは乱数入力でも傾向が変わらない」と主張するが、その根拠は 10 アーキテクチャの箱ひげ図による定性的確認のみで、探索空間規模での順位相関としての定量化が無い。Abdelfattah ら（ICLR 2021）の proxy 群では synflow は構成上データ非依存だが、jacob_cov / snip における入力データの実効的寄与は測られていない。乱数入力でも順位相関がほぼ保たれるなら、これらの proxy の予測力は入力分布ではなくアーキテクチャ固有の性質に由来することになる。",
+  "method": "最小介入による検証: 参照実装（mohsaied/zero-cost-nas の find_measures）に渡すミニバッチを、CIFAR-10 実データから同一形状の乱数ノイズ入力（標準正規、ラベルは一様乱数）に置換する。それ以外（アーキテクチャ集合・初期化・シード・バッチ形状・proxy 実装・評価層）は全条件で同一に保つ。各 proxy のスコアで全サンプル・アーキテクチャを順位付けし、NAS-Bench-201 公表テスト精度との Spearman 順位相関 ρ を airas-eval nas_pre_training で算出し、Δρ = ρ_real − ρ_rand を proxy ごとに比較する。",
+  "experimental_setup": "NAS-Bench-201 の 15,625 アーキテクチャから設計時固定シード（sample_seed=42）で 200 を一様抽出。proxy は synflow（データ非依存・正の対照）/ jacob_cov（入力依存・ラベル非依存）/ snip（入力・ラベル依存）の 3 種。入力条件は real（CIFAR-10 ミニバッチ、バッチサイズ 128）と randinput(標準正規ノイズ・一様乱数ラベル、同一形状) の 2 水準で、run は 3×2=6 本。重み初期化シードは 3 個 {0,1,2} で canonical はシード 0（事前固定）。真値は NAS-Bench-Suite-Zero 再配布の nb201_all.pickle（SHA-256 固定）の表引きのみで、アーキテクチャの学習は一切行わない。評価指標は airas-eval の nas_pre_training タスクが機械的に算出する。",
+  "primary_metric": "spearman_rho",
+  "supporting_metrics": [
+   "kendall_tau",
+   "precision_at_top_10pct"
+  ],
+  "expected_result": "jacob_cov: Δρ ≤ 0.10（ρ_real は文献値 0.73 前後を期待。Mellor らの定性的主張の定量的確認）。snip: ラベルと損失勾配に依存するため低下はより大きい（Δρ_snip > Δρ_jacob_cov)と予想するが、ρ_rand > 0.4 は保つと予想。synflow: |Δρ| ≤ 0.01（構成上データ非依存であり、これが満たされない場合は実装・パイプラインの欠陥を示す対照）。反証条件: jacob_cov の Δρ > 0.10 なら「入力データが実効的に寄与している」ことになり中心仮説は棄却される。",
+  "expected_conclusion": "zero-cost proxy の予測力の大部分が入力データ非依存であることが定量的に確認できれば、proxy 計算に実データを整備する必要が無くなり、data-free な NAS 事前評価の正当化と、proxy が測っているもの（アーキテクチャ固有の性質）の解釈に寄与する。逆に棄却されれば、proxy 評価プロトコルにおける入力分布の報告義務という方法論的含意が得られる。"
+ },
+ "experiment_history": {
+  "cycles": [
+   {
+    "run_stage": "full",
+    "experimental_design": {
+     "experiment_summary": "学習を一切行わない zero-cost proxy の入力感度実験。各 run は「1 つの proxy × 1 つの入力条件」に対応し、NAS-Bench-201 から固定シードで一様抽出した 200 アーキテクチャそれぞれを初期化し、1 ミニバッチの forward/backward で proxy スコアを計算して順位付けし、真値（ベンチマーク公表テスト精度）との順位相関を airas-eval nas_pre_training で算出する。run は 6 本: proposed-jacobcov-randinput（介入の主対象）, comparative-1-jacobcov-cifar10, comparative-2-snip-cifar10, comparative-3-snip-randinput, comparative-4-synflow-cifar10, comparative-5-synflow-randinput。GAP は proposed（jacob_cov・乱数入力）と comparative-1（jacob_cov・実データ）の spearman_rho 差 = −Δρ_jacob_cov に一致する。規模は GB200 単一 GPU で 1 run 数分（200 アーキテクチャ × 3 シード × 1 バッチ）に収まるよう設計。mode=sanity は 8 アーキテクチャ・1 シードで CPU 実行可能、pilot は 80 アーキテクチャ。",
+     "compute_environment": {
+      "os": "Linux",
+      "arch": "aarch64",
+      "gpu_type": "NVIDIA GB200",
+      "gpu_count": 1,
+      "python_version": "3.11",
+      "description": "Seyval 経由の BYO Slurm（RIKYU）。依存は uv.lock + Dockerfile で固定（aarch64 wheel 必須）。共有キャッシュ /data1 は read-only。torch は aarch64 wheel が存在する 2.x 系を使用。"
+     },
+     "models_to_use": [],
+     "datasets_to_use": [
+      "CIFAR-10（proxy 計算用の 1 ミニバッチのみ。torchvision 経由。randinput 条件では同一形状の標準正規ノイズに置換）"
+     ],
+     "evaluation_metrics": [
+      {
+       "name": "spearman_rho",
+       "description": "proxy スコアによる順位と NAS-Bench-201 公表テスト精度による順位の Spearman 順位相関係数。airas-eval nas_pre_training が predicted_scores と reference_scores から機械的に算出する。値域 [-1,1]、高いほど proxy が真の性能順位を保存している。本研究の主要指標であり、条件間の差 Δρ = ρ_real − ρ_rand が中心的な検証量。可視化は条件×proxy の棒グラフ。"
+      },
+      {
+       "name": "kendall_tau",
+       "description": "同じ順位対に対する Kendall の τ。Spearman と同様に airas-eval が算出。順位相関の頑健性確認用の支持指標。"
+      },
+      {
+       "name": "precision_at_top_10pct",
+       "description": "proxy スコア上位 10% と真値上位 10% の重なり率。airas-eval が算出。上位側の順位保存性（NAS で実際に問題になる領域）を見る支持指標。"
+      }
+     ],
+     "proposed_method": {
+      "method_name": "RandInput-ZC（jacob_cov・乱数入力での proxy 評価）",
+      "description": "参照実装 find_measures に渡すミニバッチを標準正規ノイズ入力＋一様乱数ラベルに置換して jacob_cov を計算する（介入条件）。他は comparative-1 と完全同一。Δρ がほぼ 0 であることを検証する。",
+      "training_config": null,
+      "optuna_config": null
+     },
+     "comparative_methods": [
+      {
+       "method_name": "jacob_cov / CIFAR-10 実データ（comparative-1）",
+       "description": "参照実装そのまま。jacob_cov を CIFAR-10 実ミニバッチで計算。proposed との対比較が主検証。",
+       "training_config": null
+      },
+      {
+       "method_name": "snip / CIFAR-10 実データ（comparative-2）",
+       "description": "snip（入力・ラベル依存）を実データで計算。",
+       "training_config": null
+      },
+      {
+       "method_name": "snip / 乱数入力（comparative-3）",
+       "description": "snip を乱数入力＋乱数ラベルで計算。ラベル依存 proxy の劣化量の測定。",
+       "training_config": null
+      },
+      {
+       "method_name": "synflow / CIFAR-10 実データ（comparative-4）",
+       "description": "synflow（構成上データ非依存）を実データ経路で計算。正の対照。",
+       "training_config": null
+      },
+      {
+       "method_name": "synflow / 乱数入力（comparative-5）",
+       "description": "synflow を乱数入力経路で計算。comparative-4 との差は 0 のはずで、パイプラインの健全性検査。",
+       "training_config": null
+      }
+     ]
+    }
+   }
+  ]
+ },
+ "additional_data": {
+  "run_ids": [
+   "proposed-jacobcov-randinput",
+   "comparative-1-jacobcov-cifar10",
+   "comparative-2-snip-cifar10",
+   "comparative-3-snip-randinput",
+   "comparative-4-synflow-cifar10",
+   "comparative-5-synflow-randinput"
+  ],
+  "reuse": "実装基盤は auto-res2/zero-cost-nas-rank-study（2026-08-27, 同一著者）を再利用: nb201_all.pickle の SHA-256 固定取得、foresight（mohsaied/zero-cost-nas@b5059bc4）の proxy 実装・NAS-Bench-201 ネットワークビルダ・CIFAR ローダ、aarch64 Dockerfile パターン。新規部分は randinput データローダと run 構成のみ。",
+  "execution_platform": "Seyval BYO Slurm (RIKYU, GB200, aarch64)"
+ }
+}
